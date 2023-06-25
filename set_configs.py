@@ -1,6 +1,6 @@
 import os
 
-# probably carve this out into a seperate repo, bc fairly unrelated to other modules
+
 class FileHandler:
     def __init__(self, dir_path, file_name, new_text_file):
         self.dir_path = dir_path
@@ -34,6 +34,10 @@ class FileHandler:
             if new_text not in content:
                 file.write(f"{new_text}\n")
 
+    def copy_file(self, source_file_path, dest_file_path):
+        if not os.path.exists(dest_file_path):
+            os.path.copy2(source_file_path, dest_file_path)
+
     def check_directory_permissions(self):
         if not os.path.exists(self.dir_path):
             print(f"dir does not exist: {self.dir_path}")
@@ -50,5 +54,21 @@ class FileHandler:
         print(f"Execute: {'Yes' if permission_execute else 'No'}")
 
 
+# TODO: how to best structure code? staticmethods?
 file_handler = FileHandler("my_dir", "my_file.txt", "new_text_file.txt")
-file_handler.mkdir_file_and_append()
+file_handler.mkdir()
+file_handler.create_file()
+file_handler.append_text_from_file()
+file_handler.append_text_as_arg()
+file_handler.check_directory_permissions()
+file_handler.copy_file()
+
+# define_root_dir("/animals")
+# check_directory_permissions("/animals/")
+# mkdir("/mammals/cats/")
+# create_file("/mammals/cats/names.txt")
+# append_text_from_file("/mammals/source_cat_names.txt", "/cats/names.txt")
+# mkdir("/mammals/dogs/")
+# create_file("/mammals/dogs/names.txt")
+# append_text_as_arg("dogs are great right?", "/mammals/dogs/names.txt")
+# copy_file(source_file_path/parrots.txt, dest_file_path/parrots.txt)

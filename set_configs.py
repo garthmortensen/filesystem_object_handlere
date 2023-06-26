@@ -7,7 +7,60 @@ class FileHandler:
         self.file_name = file_name
         self.file_path = os.path.join(self.dir_path, self.file_name)
         self.new_text_file = new_text_file
- 
+
+    @staticmethod
+    def get_current_dir() -> str or None:
+        """
+        Gets current working directory path.
+
+        Returns:
+            str or None: Current working directory path.
+        """
+
+        current_dir = os.getcwd()
+        if os.path.isdir(current_dir):
+            print(f"current_dir: {current_dir}")
+            return current_dir
+        else:
+            print(f"get_current_dir() found no path.")
+            return None
+
+
+
+    @staticmethod
+    def get_directory_permissions(dir_path: str) -> dict or None:
+        """
+        Gets directory permissions.
+
+        Args:
+            dir_path (str): path to directory.
+
+        Returns:
+            dict or None: Dictionary containing all permissions:
+            {
+                'Read': bool,
+                'Write': bool,
+                'Execute': bool,
+            }
+            Returns None if no such directory.
+        """
+        if not os.path.exists(dir_path):
+            print(f"dir does not exist: {dir_path}")
+            return
+
+        permission_read = os.access(dir_path, os.R_OK)
+        permission_write = os.access(dir_path, os.W_OK)
+        permission_execute = os.access(dir_path, os.X_OK)
+
+        permissions = {
+            'Read': permission_read,
+            'Write': permission_write,
+            'Execute': permission_execute
+        }
+
+        return permissions
+
+
     def mkdir(self):
         if not os.path.exists(self.dir_path):
             os.makedirs(self.dir_path)
@@ -38,30 +91,26 @@ class FileHandler:
         if not os.path.exists(dest_file_path):
             os.path.copy2(source_file_path, dest_file_path)
 
-    def check_directory_permissions(self):
-        if not os.path.exists(self.dir_path):
-            print(f"dir does not exist: {self.dir_path}")
-            return
-
-        permission_read = os.access(self.dir_path, os.R_OK)
-        permission_write = os.access(self.dir_path, os.W_OK)
-        permission_execute = os.access(self.dir_path, os.X_OK)
-
-        # fancy f-strings
-        print(f"Permissions for: {self.dir_path}")
-        print(f"Read: {'Yes' if permission_read else 'No'}")
-        print(f"Write: {'Yes' if permission_write else 'No'}")
-        print(f"Execute: {'Yes' if permission_execute else 'No'}")
 
 
-# TODO: how to best structure code? staticmethods?
-file_handler = FileHandler("my_dir", "my_file.txt", "new_text_file.txt")
-file_handler.mkdir()
-file_handler.create_file()
-file_handler.append_text_from_file()
-file_handler.append_text_as_arg()
-file_handler.check_directory_permissions()
-file_handler.copy_file()
+# paths can be relative based on where you execute from
+current_dir = FileHandler.get_current_dir()
+
+permissions = FileHandler.get_directory_permissions(current_dir)
+if permissions:
+    print(f"Permissions for: {current_dir}")
+    for permission, value in permissions.items():
+        print(f"{permission}: {value}")
+
+
+
+# file_handler = FileHandler("my_dir", "my_file.txt", "new_text_file.txt")
+# FileHandler.mkdir()
+# file_handler.create_file()
+# file_handler.append_text_from_file()
+# file_handler.append_text_as_arg()
+# file_handler.check_directory_permissions()
+# file_handler.copy_file()
 
 # define_root_dir("/animals")
 # check_directory_permissions("/animals/")
